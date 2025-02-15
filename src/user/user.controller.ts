@@ -1,13 +1,20 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Request } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Usuarios cadastrados' })
+  async getUsers() {
+    return this.userService.findAll();
+  }
 
   @Post()
   @ApiOperation({ summary: 'Cria um novo usuário' })
@@ -16,6 +23,16 @@ export class UserController {
   @ApiResponse({ status: 400, description: 'Dados inválidos.' })
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto.email, createUserDto.password, createUserDto.name);
+  }
+
+  @UseGuards(JwtAuthGuard) 
+  @Get('profile')
+  @ApiOperation({ summary: 'Retorna o perfil do usuário autenticado' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'Perfil do usuário retornado com sucesso.' })
+  @ApiResponse({ status: 401, description: 'Não autorizado.' })
+  async getProfile(@Request() req) {
+    return req.user; 
   }
 
   @Get(':id')

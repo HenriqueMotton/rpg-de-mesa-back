@@ -20,6 +20,6 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UserModule,
     AuthModule,
-  ]
+  ],
 })
 export class AppModule {}

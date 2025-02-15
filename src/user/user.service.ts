@@ -11,6 +11,14 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
+  async findAll(){
+    return this.userRepository.find({
+      select: [
+        'name'
+      ]
+    });
+  }
+
   async create(email: string, password: string, name?: string): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = this.userRepository.create({ email, password: hashedPassword, name });
