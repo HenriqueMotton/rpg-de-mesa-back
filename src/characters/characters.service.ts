@@ -24,42 +24,37 @@ export class CharactersService {
   ) {}
 
   // Cria um novo personagem
-  async create(createCharacterDto: CreateCharacterDto, user: User): Promise<Character> {
+  async create(createCharacterDto: CreateCharacterDto, user): Promise<Character> {
     const { name, money, health, attributes, selectedSkills } = createCharacterDto;
 
-    // Cria os atributos
-    // const attr = this.attributesRepository.create(attributes);
-    // await this.attributesRepository.save(attr);
+    const attr = this.attributesRepository.create({
+      forca: String(attributes.forca),
+      destreza: String(attributes.destreza),
+      constituicao: String(attributes.constituicao),
+      inteligencia: String(attributes.inteligencia),
+      sabedoria: String(attributes.sabedoria),
+      carisma: String(attributes.carisma),
+    });
+    await this.attributesRepository.save(attr);
 
-    // Cria o personagem
     const character = this.characterRepository.create({
       name,
       money,
       health,
-    //   idAttribute: attr,
-      idUser: user,
+      idAttribute: attr,
+      idUser: { id: user.userId },
     });
 
-    // Salva o personagem
-    await this.characterRepository.save(character);
+    await this.characterRepository.insert(character);
 
-    // Adiciona as perícias selecionadas
-    if (selectedSkills) {
-      const skills = await this.skillsRepository.findByIds(selectedSkills);
-      character.selectedSkills = skills;
-      await this.characterRepository.save(character);
+    if (selectedSkills.length > 0) {
+      const characterSkills = selectedSkills.map(skillId => ({
+        character,
+        skill: { id: skillId },
+      }));
+    
+      await this.characterSkillsRepository.insert(characterSkills);
     }
-
-    // Adiciona as perícias proficientes
-    // if (proficientSkills) {
-    //   for (const skillId of proficientSkills) {
-    //     const skill = await this.skillsRepository.findOne({ where: { id: skillId } });
-    //     if (skill) {
-    //       const characterSkill = this.characterSkillsRepository.create({ character, skill });
-    //       await this.characterSkillsRepository.save(characterSkill);
-    //     }
-    //   }
-    // }
 
     return character;
   }
@@ -109,7 +104,11 @@ export class CharactersService {
   }
 
   async findAllByUser(userId: number): Promise<Character[]> {
-    return this.characterRepository.find({ where: { idUser: { id: userId } }, relations: ['idAttribute', 'selectedSkills', 'characterSkills'] });
+    return this.characterRepository.find(
+      { 
+        where: { idUser: { id: userId } }
+      }
+    );
   }
 
   async findOne(id: number, userId: number): Promise<Character> {
@@ -121,10 +120,29 @@ export class CharactersService {
   }
 
   async remove(id: number, userId: number): Promise<void> {
-    const character = await this.characterRepository.findOne({ where: { id, idUser: { id: userId } } });
+    // Remove Character Skill
+    const characterSkills = await this.characterSkillsRepository.find({
+      where: { character: { id } },
+    });
+    await this.characterSkillsRepository.remove(characterSkills);
+  
+    // Encontrar o personagem e carregar a relação com atributos
+    const character = await this.characterRepository.findOne({
+      where: { id, idUser: { id: userId } },
+      relations: ['idAttribute'], 
+    });
+  
     if (!character) {
       throw new NotFoundException('Personagem não encontrado');
     }
+  
+    // Agora, removemos o personagem
     await this.characterRepository.remove(character);
+
+    // Se o personagem tiver um atributo associado, excluímos
+    if (character.idAttribute) {
+      await this.attributesRepository.remove(character.idAttribute);
+    }
   }
+  
 }

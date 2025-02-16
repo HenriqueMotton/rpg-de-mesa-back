@@ -18,8 +18,6 @@ export class CharactersController {
   @ApiResponse({ status: 201, description: 'Personagem criado com sucesso.' })
   @ApiResponse({ status: 401, description: 'Não autorizado.' })
   async create(@Body() createCharacterDto: CreateCharacterDto, @Request() req) {
-    console.log('AQUI');
-    
     return this.charactersService.create(createCharacterDto, req.user);
   }
 

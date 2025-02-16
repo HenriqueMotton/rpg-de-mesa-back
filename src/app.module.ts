@@ -9,6 +9,7 @@ import { Attributes } from './characters/entities/attributes.entity';
 import { Skills } from './skills/entities/skills.entity';
 import { CharacterSkills } from './characters/entities/character-skills.entity';
 import { SkillsModule } from './skills/skills.module';
+import { CharacterModule } from './characters/characters.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -30,7 +31,8 @@ import { SkillsModule } from './skills/skills.module';
     }),
     UserModule,
     AuthModule,
-    SkillsModule
+    SkillsModule,
+    CharacterModule
   ],
 })
 export class AppModule {}

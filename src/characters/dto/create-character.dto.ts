@@ -25,6 +25,6 @@ export class CreateCharacterDto {
 
   @IsOptional()
   @IsArray()
-  selectedSkills?: number[]; // IDs das perícias selecionadas
+  selectedSkills: number[]; // IDs das perícias selecionadas
 
 }
