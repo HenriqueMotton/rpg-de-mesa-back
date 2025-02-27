@@ -27,7 +27,7 @@ export class CharactersController {
   @ApiResponse({ status: 200, description: 'Personagens retornados com sucesso.' })
   @ApiResponse({ status: 401, description: 'Não autorizado.' })
   async findAll(@Request() req) {
-    return this.charactersService.findAllByUser(req.user.id);
+    return this.charactersService.findAllByUser(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -37,7 +37,7 @@ export class CharactersController {
   @ApiResponse({ status: 401, description: 'Não autorizado.' })
   @ApiResponse({ status: 404, description: 'Personagem não encontrado.' })
   async findOne(@Param('id') id: string, @Request() req) {
-    return this.charactersService.findOne(+id, req.user.id);
+    return this.charactersService.findOne(+id, req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -57,6 +57,6 @@ export class CharactersController {
   @ApiResponse({ status: 401, description: 'Não autorizado.' })
   @ApiResponse({ status: 404, description: 'Personagem não encontrado.' })
   async remove(@Param('id') id: string, @Request() req) {
-    return this.charactersService.remove(+id, req.user.id);
+    return this.charactersService.remove(+id, req.user.userId);
   }
 }

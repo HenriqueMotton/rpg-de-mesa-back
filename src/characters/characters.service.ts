@@ -111,12 +111,34 @@ export class CharactersService {
     );
   }
 
-  async findOne(id: number, userId: number): Promise<Character> {
-    const character = await this.characterRepository.findOne({ where: { id, idUser: { id: userId } }, relations: ['idAttribute', 'selectedSkills', 'characterSkills'] });
+  async findOne(id: number, userId: number): Promise<any> {
+    const character = await this.characterRepository.findOne(
+      { 
+        where: { 
+          id, 
+          idUser: { id: userId } 
+        }, 
+        relations: [
+          'idAttribute', 
+          'selectedSkills', 
+          'characterSkills',
+          'characterSkills.skill'
+        ] 
+      }
+    );
     if (!character) {
       throw new NotFoundException('Personagem não encontrado');
     }
-    return character;
+
+    const formattedCharacter = {
+      ...character,
+      characterSkills: character.characterSkills.map(characterSkill => ({
+        name: characterSkill.skill.name,
+        attribute: characterSkill.skill.attribute
+      })),
+    };
+    
+    return formattedCharacter;
   }
 
   async remove(id: number, userId: number): Promise<void> {

@@ -31,6 +31,9 @@ export class Character {
   @Column('int')
   health: number;
 
+  @Column('int', {nullable: true})
+  maxHealth: number;
+
   @Column('int', { default: 1 })
   nivel: number;
 
