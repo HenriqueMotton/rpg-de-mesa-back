@@ -1,5 +1,5 @@
 // src/characters/characters.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Character } from './entities/character.entity';
@@ -61,45 +61,32 @@ export class CharactersService {
 
   // Atualiza um personagem existente
   async update(id: number, updateCharacterDto: UpdateCharacterDto): Promise<Character> {
-    const character = await this.characterRepository.findOne({ where: { id }, relations: ['idAttribute', 'selectedSkills', 'characterSkills'] });
+    const character = await this.characterRepository.findOne({ 
+        where: { id }, 
+        relations: ['idAttribute', 'selectedSkills', 'characterSkills'] 
+    });
+
     if (!character) {
-      throw new NotFoundException('Personagem não encontrado');
+        throw new NotFoundException('Personagem não encontrado');
     }
 
-    // Atualiza os atributos básicos
-    if (updateCharacterDto.name) character.name = updateCharacterDto.name;
-    if (updateCharacterDto.money) character.money = updateCharacterDto.money;
-    if (updateCharacterDto.health) character.health = updateCharacterDto.health;
-    if (updateCharacterDto.nivel) character.nivel = updateCharacterDto.nivel;
+    Object.assign(character, updateCharacterDto);
 
-    // Atualiza os atributos
     if (updateCharacterDto.attributes) {
-      Object.assign(character.idAttribute, updateCharacterDto.attributes);
-      await this.attributesRepository.save(character.idAttribute);
+        Object.assign(character.idAttribute, updateCharacterDto.attributes);
+        await this.attributesRepository.save(character.idAttribute);
     }
 
-    // Atualiza as perícias selecionadas
     if (updateCharacterDto.selectedSkills) {
-      const skills = await this.skillsRepository.findByIds(updateCharacterDto.selectedSkills);
-      character.selectedSkills = skills;
+        const skills = await this.skillsRepository.findByIds(updateCharacterDto.selectedSkills);
+        character.selectedSkills = skills;
     }
 
-    // Atualiza as perícias proficientes
-    // if (updateCharacterDto.proficientSkills) {
-    //   // Remove todas as proficiências existentes
-    //   await this.characterSkillsRepository.delete({ character: { id } });
-
-    //   // Adiciona as novas proficiências
-    //   for (const skillId of updateCharacterDto.proficientSkills) {
-    //     const skill = await this.skillsRepository.findOne({ where: { id: skillId } });
-    //     if (skill) {
-    //       const characterSkill = this.characterSkillsRepository.create({ character, skill });
-    //       await this.characterSkillsRepository.save(characterSkill);
-    //     }
-    //   }
-    // }
-
-    await this.characterRepository.save(character);
+    await this.characterRepository.save(character).catch(error => {
+      console.error('Erro ao salvar personagem:', error);
+      throw new InternalServerErrorException('Erro ao atualizar personagem');
+    });
+    
     return character;
   }
 

@@ -15,6 +15,10 @@ export class UpdateCharacterDto {
 
   @IsOptional()
   @IsInt()
+  maxHealth?: number;
+  
+  @IsOptional()
+  @IsInt()
   nivel?: number;
 
   @IsOptional()
