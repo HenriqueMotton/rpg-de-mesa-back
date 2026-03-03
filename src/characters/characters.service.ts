@@ -41,6 +41,7 @@ export class CharactersService {
       name,
       money,
       health,
+      maxHealth: health,
       idAttribute: attr,
       idUser: { id: user.userId },
     });
@@ -86,7 +87,7 @@ export class CharactersService {
       console.error('Erro ao salvar personagem:', error);
       throw new InternalServerErrorException('Erro ao atualizar personagem');
     });
-    
+
     return character;
   }
 
