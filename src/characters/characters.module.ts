@@ -6,6 +6,8 @@ import { CharactersController } from './characters.controller';
 import { Skills } from 'src/skills/entities/skills.entity';
 import { Attributes } from './entities/attributes.entity';
 import { CharacterSkills } from './entities/character-skills.entity';
+import { Race } from '../race/entities/race.entity';
+import { SubRace } from '../race/entities/sub-race.entity';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { CharacterSkills } from './entities/character-skills.entity';
       Attributes,
       Skills,
       CharacterSkills,
+      Race,
+      SubRace,
     ]),
   ],
   providers: [CharactersService],

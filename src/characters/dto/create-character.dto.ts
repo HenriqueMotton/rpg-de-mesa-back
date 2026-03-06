@@ -27,4 +27,11 @@ export class CreateCharacterDto {
   @IsArray()
   selectedSkills: number[]; // IDs das perícias selecionadas
 
+  @IsOptional()
+  @IsInt()
+  raceId?: number;
+
+  @IsOptional()
+  @IsInt()
+  subRaceId?: number;
 }

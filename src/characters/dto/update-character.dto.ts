@@ -22,6 +22,10 @@ export class UpdateCharacterDto {
   nivel?: number;
 
   @IsOptional()
+  @IsInt()
+  xp?: number;
+
+  @IsOptional()
   attributes?: {
     forca?: number;
     destreza?: number;

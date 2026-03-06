@@ -4,6 +4,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, ManyToMany
 import { Attributes } from './attributes.entity';
 import { Skills } from '../../skills/entities/skills.entity';
 import { CharacterSkills } from './character-skills.entity';
+import { Race } from '../../race/entities/race.entity';
+import { SubRace } from '../../race/entities/sub-race.entity';
 
 @Entity()
 export class Character {
@@ -37,10 +39,21 @@ export class Character {
   @Column('int', { default: 1 })
   nivel: number;
 
+  @Column('int', { default: 0 })
+  xp: number;
+
   @ManyToOne(() => User, (user) => user.characters)
   @JoinColumn({ name: 'id_user' })
   idUser: User;
 
   @OneToMany(() => CharacterSkills, (characterSkill) => characterSkill.character)
   characterSkills: CharacterSkills[];
+
+  @ManyToOne(() => Race, { nullable: true, eager: false })
+  @JoinColumn({ name: 'race_id' })
+  race: Race;
+
+  @ManyToOne(() => SubRace, { nullable: true, eager: false })
+  @JoinColumn({ name: 'sub_race_id' })
+  subRace: SubRace;
 }
