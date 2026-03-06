@@ -29,6 +29,10 @@ export class CreateCharacterDto {
 
   @IsOptional()
   @IsInt()
+  classId?: number;
+
+  @IsOptional()
+  @IsInt()
   raceId?: number;
 
   @IsOptional()

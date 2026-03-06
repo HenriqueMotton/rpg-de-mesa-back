@@ -15,6 +15,14 @@ import { InventoryModule } from './inventory/inventory.module';
 import { Race } from './race/entities/race.entity';
 import { SubRace } from './race/entities/sub-race.entity';
 import { RaceModule } from './race/race.module';
+import { CharacterSpell } from './spells/entities/character-spell.entity';
+import { SpellsModule } from './spells/spells.module';
+import { DndClass } from './classes/entities/dnd-class.entity';
+import { ClassesModule } from './classes/classes.module';
+import { CharacterEquipment } from './equipment/entities/character-equipment.entity';
+import { EquipmentModule } from './equipment/equipment.module';
+import { Kit } from './kits/entities/kit.entity';
+import { KitsModule } from './kits/kits.module';
 
 @Module({
   imports: [
@@ -35,6 +43,10 @@ import { RaceModule } from './race/race.module';
         InventoryItem,
         Race,
         SubRace,
+        CharacterSpell,
+        DndClass,
+        CharacterEquipment,
+        Kit,
       ],
       synchronize: true, // Use apenas em desenvolvimento
     }),
@@ -44,6 +56,10 @@ import { RaceModule } from './race/race.module';
     CharacterModule,
     InventoryModule,
     RaceModule,
+    SpellsModule,
+    ClassesModule,
+    EquipmentModule,
+    KitsModule,
   ],
 })
 export class AppModule {}

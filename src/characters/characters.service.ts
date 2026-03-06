@@ -11,6 +11,7 @@ import { User } from '../user/entities/user.entity';
 import { CreateCharacterDto } from './dto/create-character.dto';
 import { Race } from '../race/entities/race.entity';
 import { SubRace } from '../race/entities/sub-race.entity';
+import { DndClass } from '../classes/entities/dnd-class.entity';
 
 const XP_THRESHOLDS = [0, 300, 900, 1800, 3800, 7500, 14000, 23000, 34000, 48000, 64000, 83000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000];
 
@@ -38,11 +39,13 @@ export class CharactersService {
     private readonly raceRepository: Repository<Race>,
     @InjectRepository(SubRace)
     private readonly subRaceRepository: Repository<SubRace>,
+    @InjectRepository(DndClass)
+    private readonly dndClassRepository: Repository<DndClass>,
   ) {}
 
   // Cria um novo personagem
   async create(createCharacterDto: CreateCharacterDto, user): Promise<Character> {
-    const { name, money, health, attributes, selectedSkills, raceId, subRaceId } = createCharacterDto;
+    const { name, money, health, attributes, selectedSkills, raceId, subRaceId, classId } = createCharacterDto;
 
     // Busca a raça e aplica bônus nos atributos base
     let race: Race | null = null;
@@ -52,6 +55,11 @@ export class CharactersService {
       race = await this.raceRepository.findOne({ where: { id: raceId } });
       if (race) Object.assign(bonuses, race.bonuses);
     }
+    let dndClass: DndClass | null = null;
+    if (classId) {
+      dndClass = await this.dndClassRepository.findOne({ where: { id: classId } });
+    }
+
     if (subRaceId) {
       subRace = await this.subRaceRepository.findOne({ where: { id: subRaceId } });
       if (subRace) {
@@ -82,6 +90,7 @@ export class CharactersService {
       maxHealth: effectiveHealth,
       idAttribute: attr,
       idUser: { id: user.userId },
+      ...(dndClass ? { dndClass } : {}),
       ...(race ? { race } : {}),
       ...(subRace ? { subRace } : {}),
     });
@@ -138,7 +147,7 @@ export class CharactersService {
   async findAllByUser(userId: number): Promise<Character[]> {
     return this.characterRepository.find({
       where: { idUser: { id: userId } },
-      relations: ['race', 'subRace'],
+      relations: ['race', 'subRace', 'dndClass'],
     });
   }
 
@@ -156,6 +165,7 @@ export class CharactersService {
           'characterSkills.skill',
           'race',
           'subRace',
+          'dndClass',
         ]
       }
     );
