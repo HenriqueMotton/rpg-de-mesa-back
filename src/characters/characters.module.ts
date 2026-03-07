@@ -9,6 +9,7 @@ import { CharacterSkills } from './entities/character-skills.entity';
 import { Race } from '../race/entities/race.entity';
 import { SubRace } from '../race/entities/sub-race.entity';
 import { DndClass } from '../classes/entities/dnd-class.entity';
+import { CharacterSpell } from '../spells/entities/character-spell.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DndClass } from '../classes/entities/dnd-class.entity';
       Race,
       SubRace,
       DndClass,
+      CharacterSpell,
     ]),
   ],
   providers: [CharactersService],

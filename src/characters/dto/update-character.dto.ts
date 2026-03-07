@@ -1,5 +1,5 @@
 // src/characters/dto/update-character.dto.ts
-import { IsOptional, IsInt, IsArray } from 'class-validator';
+import { IsOptional, IsInt, IsArray, IsObject } from 'class-validator';
 
 export class UpdateCharacterDto {
   @IsOptional()
@@ -38,5 +38,13 @@ export class UpdateCharacterDto {
   @IsOptional()
   @IsArray()
   selectedSkills?: number[]; // IDs das perícias selecionadas
+
+  @IsOptional()
+  @IsObject()
+  spellSlots?: Record<string, number>; // { "1": usedCount, ... }
+
+  @IsOptional()
+  @IsInt()
+  hitDiceUsed?: number;
 
 }

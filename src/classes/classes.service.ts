@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DndClass, ClassFeature, ClassSpellEntry } from './entities/dnd-class.entity';
+import { DndClass, ClassFeature, ClassSpellEntry, ClassProficiencies } from './entities/dnd-class.entity';
 
 // ─── Seed data ───────────────────────────────────────────────────────────────
 
@@ -14,6 +14,7 @@ type ClassSeed = {
   equipment: string[];
   features: ClassFeature[];
   classSpells: ClassSpellEntry[];
+  proficiencies: ClassProficiencies;
 };
 
 function sp(
@@ -152,6 +153,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Defesa Sem Armadura', description: 'Quando sem armadura, sua CA = 10 + modificador de DES + modificador de CON.' },
       { name: 'Ataques Reckless', description: 'Pode atacar imprudentemente para ter vantagem, mas inimigos também têm vantagem contra você.' },
     ],
+    proficiencies: {
+      armor: ['Leve', 'Média', 'Escudos'],
+      weapons: ['Simples', 'Marciais'],
+      tools: [],
+      savingThrows: ['Força', 'Constituição'],
+    },
   },
   {
     name: 'Bardo',
@@ -170,6 +177,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Especialização', description: 'Dobra o bônus de proficiência em duas perícias escolhidas.' },
     ],
     classSpells: BARDO_SPELLS,
+    proficiencies: {
+      armor: ['Leve'],
+      weapons: ['Simples', 'Arco longo', 'Arco curto', 'Balhadora longa', 'Rapieira', 'Espada curta', 'Espada longa'],
+      tools: ['3 instrumentos musicais (à escolha)'],
+      savingThrows: ['Destreza', 'Carisma'],
+    },
   },
   {
     name: 'Bruxo',
@@ -188,6 +201,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Magia de Pacto', description: 'Slots de magia recuperados em descanso curto — únicos entre todos os conjuradores.' },
     ],
     classSpells: BRUXO_SPELLS,
+    proficiencies: {
+      armor: ['Leve'],
+      weapons: ['Simples'],
+      tools: [],
+      savingThrows: ['Sabedoria', 'Carisma'],
+    },
   },
   {
     name: 'Clérico',
@@ -206,6 +225,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Domínio Divino', description: 'Especialização temática: Vida, Luz, Guerra, Morte, Natureza, Tempestade e outros.' },
     ],
     classSpells: CLERIGO_SPELLS,
+    proficiencies: {
+      armor: ['Leve', 'Média', 'Escudos'],
+      weapons: ['Simples'],
+      tools: [],
+      savingThrows: ['Sabedoria', 'Carisma'],
+    },
   },
   {
     name: 'Druida',
@@ -224,6 +249,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Círculo Druídico', description: 'Círculo da Terra (magias extras), Círculo da Lua (formas bestiárias poderosas), entre outros.' },
     ],
     classSpells: DRUIDA_SPELLS,
+    proficiencies: {
+      armor: ['Leve', 'Média', 'Escudos (não-metálicos)'],
+      weapons: ['Clava', 'Adaga', 'Dardo', 'Azagaia', 'Maça', 'Cajado', 'Cimitarra', 'Foice', 'Funda', 'Lança'],
+      tools: ['Suprimentos de herbalista'],
+      savingThrows: ['Inteligência', 'Sabedoria'],
+    },
   },
   {
     name: 'Feiticeiro',
@@ -242,6 +273,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Pontos de Feitiçaria', description: 'Recurso exclusivo para criar slots de magia e alimentar metamagias. Recuperado em descanso longo.' },
     ],
     classSpells: FEITICEIRO_SPELLS,
+    proficiencies: {
+      armor: [],
+      weapons: ['Adaga', 'Dardo', 'Funda', 'Cajado', 'Balhadora leve'],
+      tools: [],
+      savingThrows: ['Constituição', 'Carisma'],
+    },
   },
   {
     name: 'Guerreiro',
@@ -260,6 +297,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Ação Extra', description: 'Ataca mais vezes por turno do que qualquer outra classe — até 4 ataques no nível 20.' },
     ],
     classSpells: [],
+    proficiencies: {
+      armor: ['Todas', 'Escudos'],
+      weapons: ['Simples', 'Marciais'],
+      tools: [],
+      savingThrows: ['Força', 'Constituição'],
+    },
   },
   {
     name: 'Ladino',
@@ -278,6 +321,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Ação Ardilosa', description: 'Dash, Desvio ou Esconder como ação bônus em qualquer turno — mobilidade incomparável.' },
     ],
     classSpells: [],
+    proficiencies: {
+      armor: ['Leve'],
+      weapons: ['Simples', 'Balhadora longa', 'Arco longo', 'Arco curto', 'Rapieira', 'Espada curta', 'Espada longa'],
+      tools: ['Ferramentas de ladrão'],
+      savingThrows: ['Destreza', 'Inteligência'],
+    },
   },
   {
     name: 'Mago',
@@ -296,6 +345,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Tradição Arcana', description: 'Evocação, Ilusão, Necromancia, Abjuração, Adivinhação, entre outras escolas.' },
     ],
     classSpells: MAGO_SPELLS,
+    proficiencies: {
+      armor: [],
+      weapons: ['Adaga', 'Dardo', 'Funda', 'Cajado', 'Balhadora leve'],
+      tools: [],
+      savingThrows: ['Inteligência', 'Sabedoria'],
+    },
   },
   {
     name: 'Monge',
@@ -313,6 +368,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Movimento Desarmado', description: 'Velocidade extra crescente. Eventualmente corre sobre água e paredes.' },
     ],
     classSpells: [],
+    proficiencies: {
+      armor: [],
+      weapons: ['Simples', 'Espada curta'],
+      tools: ['1 ferramenta de artesão ou instrumento musical (à escolha)'],
+      savingThrows: ['Força', 'Destreza'],
+    },
   },
   {
     name: 'Paladino',
@@ -331,6 +392,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Juramento Sagrado', description: 'Devoção, Anciãos, Vingança, Redenção — define seus poderes e código de honra.' },
     ],
     classSpells: PALADINO_SPELLS,
+    proficiencies: {
+      armor: ['Todas', 'Escudos'],
+      weapons: ['Simples', 'Marciais'],
+      tools: [],
+      savingThrows: ['Sabedoria', 'Carisma'],
+    },
   },
   {
     name: 'Patrulheiro',
@@ -349,6 +416,12 @@ const CLASS_SEED: ClassSeed[] = [
       { name: 'Magia de Patrulheiro', description: 'Conjuração divina focada em natureza, rastreamento e combate ao ar livre.' },
     ],
     classSpells: PATRULHEIRO_SPELLS,
+    proficiencies: {
+      armor: ['Leve', 'Média', 'Escudos'],
+      weapons: ['Simples', 'Marciais'],
+      tools: [],
+      savingThrows: ['Força', 'Destreza'],
+    },
   },
 ];
 
@@ -370,14 +443,15 @@ export class ClassesService implements OnModuleInit {
       return;
     }
 
-    // Migra registros existentes que ainda não têm classSpells
-    const sample = await this.classRepository.findOne({ where: {} });
-    if (sample && (!sample.classSpells || sample.classSpells.length === 0)) {
-      for (const seed of CLASS_SEED) {
-        await this.classRepository.update(
-          { name: seed.name },
-          { classSpells: seed.classSpells },
-        );
+    // Garante que cada classe tem todos os campos do seed
+    for (const seed of CLASS_SEED) {
+      const existing = await this.classRepository.findOne({ where: { name: seed.name } });
+      if (!existing) continue;
+      const update: Partial<DndClass> = {};
+      if (!existing.classSpells || existing.classSpells.length === 0) update.classSpells   = seed.classSpells;
+      if (!existing.proficiencies)                                     update.proficiencies = seed.proficiencies;
+      if (Object.keys(update).length > 0) {
+        await this.classRepository.update({ name: seed.name }, update);
       }
     }
   }

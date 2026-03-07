@@ -55,4 +55,12 @@ export class CreateCharacterSpellDto {
 
   @IsOptional()
   activeUntil?: Date | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isCustom?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isRacial?: boolean;
 }

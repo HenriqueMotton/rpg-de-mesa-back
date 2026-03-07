@@ -51,6 +51,46 @@ export class SpellsService {
     return this.spellsRepository.save(spell);
   }
 
+  async findAllForMaster() {
+    return this.spellsRepository.find({
+      relations: ['character', 'character.dndClass', 'character.race'],
+      order: { level: 'ASC', name: 'ASC' },
+    });
+  }
+
+  async bulkCreate(characterId: number, userId: number, spells: CreateCharacterSpellDto[]): Promise<CharacterSpell[]> {
+    const character = await this.characterRepository.findOne({
+      where: { id: characterId, idUser: { id: userId } },
+    });
+    if (!character) throw new NotFoundException('Personagem não encontrado');
+
+    const entities = spells.map((dto) => this.spellsRepository.create({ ...dto, character }));
+    return this.spellsRepository.save(entities);
+  }
+
+  async bulkSetPrepared(characterId: number, userId: number, preparedIds: number[]): Promise<void> {
+    const character = await this.characterRepository.findOne({
+      where: { id: characterId, idUser: { id: userId } },
+    });
+    if (!character) throw new NotFoundException('Personagem não encontrado');
+
+    await this.spellsRepository
+      .createQueryBuilder()
+      .update()
+      .set({ prepared: false })
+      .where('character_id = :characterId AND "isRacial" = false AND "isCustom" = false', { characterId })
+      .execute();
+
+    if (preparedIds.length > 0) {
+      await this.spellsRepository
+        .createQueryBuilder()
+        .update()
+        .set({ prepared: true })
+        .where('id IN (:...ids) AND character_id = :characterId', { ids: preparedIds, characterId })
+        .execute();
+    }
+  }
+
   async remove(id: number, userId: number): Promise<void> {
     const spell = await this.spellsRepository.findOne({
       where: { id },

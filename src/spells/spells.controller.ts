@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request, HttpCode } from '@nestjs/common';
 import { SpellsService } from './spells.service';
 import { CreateCharacterSpellDto } from './dto/create-character-spell.dto';
 import { UpdateCharacterSpellDto } from './dto/update-character-spell.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { MasterGuard } from '../auth/master.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('spells')
@@ -10,6 +11,36 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('spells')
 export class SpellsController {
   constructor(private readonly spellsService: SpellsService) {}
+
+  @UseGuards(JwtAuthGuard, MasterGuard)
+  @Get('master/all')
+  @ApiOperation({ summary: 'Retorna todas as magias de todos os personagens (apenas mestre)' })
+  async findAllForMaster() {
+    return this.spellsService.findAllForMaster();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('character/:characterId/bulk')
+  @ApiOperation({ summary: 'Adiciona múltiplas magias de uma vez' })
+  async bulkCreate(
+    @Param('characterId') characterId: string,
+    @Body() body: { spells: any[] },
+    @Request() req,
+  ) {
+    return this.spellsService.bulkCreate(+characterId, req.user.userId, body.spells);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('character/:characterId/prepare')
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Define as magias preparadas do personagem' })
+  async bulkPrepare(
+    @Param('characterId') characterId: string,
+    @Body() body: { preparedIds: number[] },
+    @Request() req,
+  ) {
+    await this.spellsService.bulkSetPrepared(+characterId, req.user.userId, body.preparedIds ?? []);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('character/:characterId')

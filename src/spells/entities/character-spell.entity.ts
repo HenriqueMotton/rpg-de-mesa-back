@@ -46,6 +46,15 @@ export class CharacterSpell {
   @Column({ default: false })
   prepared: boolean;
 
+  // false = veio do catálogo da classe (duração definida pelo D&D)
+  // true  = adicionada manualmente durante uma sessão (duração personalizável)
+  @Column({ default: false })
+  isCustom: boolean;
+
+  // true = magia inata racial (ex: Fogo das Fadas do Drow)
+  @Column({ default: false })
+  isRacial: boolean;
+
   @Column({ default: false })
   isActive: boolean;
 

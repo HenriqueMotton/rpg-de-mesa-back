@@ -23,6 +23,8 @@ import { CharacterEquipment } from './equipment/entities/character-equipment.ent
 import { EquipmentModule } from './equipment/equipment.module';
 import { Kit } from './kits/entities/kit.entity';
 import { KitsModule } from './kits/kits.module';
+import { InitiativeSession } from './initiative/entities/initiative-session.entity';
+import { InitiativeModule } from './initiative/initiative.module';
 
 @Module({
   imports: [
@@ -47,6 +49,7 @@ import { KitsModule } from './kits/kits.module';
         DndClass,
         CharacterEquipment,
         Kit,
+        InitiativeSession,
       ],
       synchronize: true, // Use apenas em desenvolvimento
     }),
@@ -60,6 +63,7 @@ import { KitsModule } from './kits/kits.module';
     ClassesModule,
     EquipmentModule,
     KitsModule,
+    InitiativeModule,
   ],
 })
 export class AppModule {}

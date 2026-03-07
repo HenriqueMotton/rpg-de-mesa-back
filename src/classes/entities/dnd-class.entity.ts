@@ -5,6 +5,13 @@ export type ClassFeature = {
   description: string;
 };
 
+export type ClassProficiencies = {
+  armor: string[];
+  weapons: string[];
+  tools: string[];
+  savingThrows: string[];
+};
+
 export type ClassSpellEntry = {
   name: string;
   level: number;
@@ -48,4 +55,7 @@ export class DndClass {
 
   @Column({ type: 'jsonb', default: '[]' })
   classSpells: ClassSpellEntry[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  proficiencies: ClassProficiencies;
 }

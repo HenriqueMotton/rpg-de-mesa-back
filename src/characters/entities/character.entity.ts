@@ -61,4 +61,16 @@ export class Character {
   @ManyToOne(() => SubRace, { nullable: true, eager: false })
   @JoinColumn({ name: 'sub_race_id' })
   subRace: SubRace;
+
+  @Column({ nullable: true, type: 'varchar' })
+  avatarUrl: string | null;
+
+  @Column({ nullable: true, type: 'int' })
+  height: number | null;
+
+  @Column({ type: 'jsonb', nullable: true, default: {} })
+  spellSlots: Record<string, number>; // { "1": usedCount, "2": usedCount, ... }
+
+  @Column({ type: 'int', default: 0 })
+  hitDiceUsed: number;
 }

@@ -38,4 +38,8 @@ export class CreateCharacterDto {
   @IsOptional()
   @IsInt()
   subRaceId?: number;
+
+  @IsOptional()
+  @IsInt()
+  height?: number;
 }
