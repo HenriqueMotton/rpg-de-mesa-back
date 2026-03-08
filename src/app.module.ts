@@ -26,6 +26,14 @@ import { Kit } from './kits/entities/kit.entity';
 import { KitsModule } from './kits/kits.module';
 import { InitiativeSession } from './initiative/entities/initiative-session.entity';
 import { InitiativeModule } from './initiative/initiative.module';
+import { MonstersModule } from './monsters/monsters.module';
+import { DndMonster } from './monsters/entities/dnd-monster.entity';
+import { PriceItemsModule } from './price-items/price-items.module';
+import { PriceItem } from './price-items/entities/price-item.entity';
+import { BugReportsModule } from './bug-reports/bug-reports.module';
+import { BugReport } from './bug-reports/entities/bug-report.entity';
+import { ChatModule } from './chat/chat.module';
+import { ChatMessage } from './chat/entities/chat-message.entity';
 
 @Module({
   imports: [
@@ -52,6 +60,10 @@ import { InitiativeModule } from './initiative/initiative.module';
         CharacterEquipment,
         Kit,
         InitiativeSession,
+        DndMonster,
+        PriceItem,
+        BugReport,
+        ChatMessage,
       ],
       synchronize: true, // Use apenas em desenvolvimento
     }),
@@ -66,6 +78,10 @@ import { InitiativeModule } from './initiative/initiative.module';
     EquipmentModule,
     KitsModule,
     InitiativeModule,
+    MonstersModule,
+    PriceItemsModule,
+    BugReportsModule,
+    ChatModule,
   ],
 })
 export class AppModule {}

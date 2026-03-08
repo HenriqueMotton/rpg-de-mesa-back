@@ -39,7 +39,7 @@ export class Character {
   money: number; // peças de ouro (po)
 
   @Column('int', { default: 0 })
-  pl: number; // peças de platina
+  pc: number; // peças de cobre
 
   @Column('int')
   health: number;

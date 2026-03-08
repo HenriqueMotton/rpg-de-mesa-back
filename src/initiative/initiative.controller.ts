@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, UseGuards, Query } from '@nestjs/common';
 import { InitiativeService } from './initiative.service';
 import { InitiativeEntry } from './entities/initiative-session.entity';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -30,5 +30,17 @@ export class InitiativeController {
   @Delete('active')
   deactivate() {
     return this.initiativeService.deactivate();
+  }
+
+  @UseGuards(MasterGuard)
+  @Patch('active/entry-hp')
+  updateEntryHp(@Body('index') index: number, @Body('currentHp') currentHp: number) {
+    return this.initiativeService.updateEntryHp(index ?? 0, currentHp ?? 0);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('active/xp-summary')
+  getXpSummary() {
+    return this.initiativeService.getXpSummary();
   }
 }

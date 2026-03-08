@@ -15,7 +15,7 @@ export class CreateCharacterDto {
 
   @IsOptional()
   @IsInt()
-  pl?: number; // peças de platina (default 0)
+  pc?: number; // peças de cobre (default 0)
 
   @IsNotEmpty()
   @IsInt()

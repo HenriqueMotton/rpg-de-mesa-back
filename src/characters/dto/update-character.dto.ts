@@ -15,7 +15,7 @@ export class UpdateCharacterDto {
 
   @IsOptional()
   @IsInt()
-  pl?: number; // peças de platina
+  pc?: number; // peças de cobre
 
   @IsOptional()
   @IsInt()

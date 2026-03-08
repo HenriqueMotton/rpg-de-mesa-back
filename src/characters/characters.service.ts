@@ -96,7 +96,7 @@ export class CharactersService {
       name,
       pp: createCharacterDto.pp ?? 0,
       money,
-      pl: createCharacterDto.pl ?? 0,
+      pc: createCharacterDto.pc ?? 0,
       health: effectiveHealth,
       maxHealth: effectiveHealth,
       idAttribute: attr,

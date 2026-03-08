@@ -36,4 +36,24 @@ export class InitiativeService {
   async deactivate(): Promise<void> {
     await this.repo.update({ isActive: true }, { isActive: false });
   }
+
+  async updateEntryHp(entryIndex: number, currentHp: number): Promise<InitiativeSession | null> {
+    const session = await this.getActive();
+    if (!session) return null;
+    if (entryIndex < 0 || entryIndex >= session.entries.length) return session;
+    const entry = session.entries[entryIndex];
+    entry.currentHp = Math.max(0, currentHp);
+    entry.dead = entry.currentHp === 0;
+    return this.repo.save(session);
+  }
+
+  async getXpSummary(): Promise<{ total: number; defeated: { name: string; xp: number; cr: string }[] }> {
+    const session = await this.getActive();
+    if (!session) return { total: 0, defeated: [] };
+    const defeated = session.entries
+      .filter((e) => e.isMonster && e.dead && e.xp)
+      .map((e) => ({ name: e.name, xp: e.xp!, cr: e.cr ?? '?' }));
+    const total = defeated.reduce((sum, d) => sum + d.xp, 0);
+    return { total, defeated };
+  }
 }
