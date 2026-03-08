@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request, HttpCode, Query } from '@nestjs/common';
 import { SpellsService } from './spells.service';
 import { CreateCharacterSpellDto } from './dto/create-character-spell.dto';
 import { UpdateCharacterSpellDto } from './dto/update-character-spell.dto';
@@ -11,6 +11,19 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('spells')
 export class SpellsController {
   constructor(private readonly spellsService: SpellsService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('catalog')
+  @ApiOperation({ summary: 'Retorna o catálogo de magias D&D 5e' })
+  async findDndSpells(
+    @Query('class') className?: string,
+    @Query('maxLevel') maxLevel?: string,
+  ) {
+    return this.spellsService.findDndSpells(
+      className,
+      maxLevel !== undefined ? parseInt(maxLevel) : undefined,
+    );
+  }
 
   @UseGuards(JwtAuthGuard, MasterGuard)
   @Get('master/all')

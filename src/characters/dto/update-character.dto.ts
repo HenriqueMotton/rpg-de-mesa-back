@@ -7,7 +7,15 @@ export class UpdateCharacterDto {
 
   @IsOptional()
   @IsInt()
-  money?: number;
+  pp?: number; // peças de prata
+
+  @IsOptional()
+  @IsInt()
+  money?: number; // peças de ouro
+
+  @IsOptional()
+  @IsInt()
+  pl?: number; // peças de platina
 
   @IsOptional()
   @IsInt()
@@ -47,4 +55,10 @@ export class UpdateCharacterDto {
   @IsInt()
   hitDiceUsed?: number;
 
+  @IsOptional()
+  @IsInt()
+  asiPointsUsed?: number;
+
+  @IsOptional()
+  freeAttrEdit?: boolean;
 }

@@ -16,6 +16,7 @@ import { Race } from './race/entities/race.entity';
 import { SubRace } from './race/entities/sub-race.entity';
 import { RaceModule } from './race/race.module';
 import { CharacterSpell } from './spells/entities/character-spell.entity';
+import { DndSpell } from './spells/entities/dnd-spell.entity';
 import { SpellsModule } from './spells/spells.module';
 import { DndClass } from './classes/entities/dnd-class.entity';
 import { ClassesModule } from './classes/classes.module';
@@ -46,6 +47,7 @@ import { InitiativeModule } from './initiative/initiative.module';
         Race,
         SubRace,
         CharacterSpell,
+        DndSpell,
         DndClass,
         CharacterEquipment,
         Kit,

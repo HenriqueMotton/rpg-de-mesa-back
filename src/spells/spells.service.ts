@@ -1,19 +1,43 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CharacterSpell } from './entities/character-spell.entity';
 import { Character } from '../characters/entities/character.entity';
+import { DndSpell } from './entities/dnd-spell.entity';
 import { CreateCharacterSpellDto } from './dto/create-character-spell.dto';
 import { UpdateCharacterSpellDto } from './dto/update-character-spell.dto';
+import { DND_SPELLS_SEED } from './dnd-spells.seed';
 
 @Injectable()
-export class SpellsService {
+export class SpellsService implements OnModuleInit {
   constructor(
     @InjectRepository(CharacterSpell)
     private readonly spellsRepository: Repository<CharacterSpell>,
     @InjectRepository(Character)
     private readonly characterRepository: Repository<Character>,
+    @InjectRepository(DndSpell)
+    private readonly dndSpellRepository: Repository<DndSpell>,
   ) {}
+
+  async onModuleInit() {
+    const count = await this.dndSpellRepository.count();
+    if (count === 0) {
+      await this.dndSpellRepository.save(
+        DND_SPELLS_SEED.map((s) => this.dndSpellRepository.create(s)),
+      );
+    }
+  }
+
+  async findDndSpells(className?: string, maxLevel?: number): Promise<DndSpell[]> {
+    const qb = this.dndSpellRepository.createQueryBuilder('s').orderBy('s.level', 'ASC').addOrderBy('s.name', 'ASC');
+    if (className) {
+      qb.andWhere('s.classes @> :className::jsonb', { className: JSON.stringify([className]) });
+    }
+    if (maxLevel !== undefined) {
+      qb.andWhere('s.level <= :maxLevel', { maxLevel });
+    }
+    return qb.getMany();
+  }
 
   async findByCharacter(characterId: number, userId: number) {
     const character = await this.characterRepository.findOne({

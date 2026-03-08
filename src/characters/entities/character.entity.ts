@@ -32,8 +32,14 @@ export class Character {
   })
   selectedSkills: Skills[];
 
+  @Column('int', { default: 0 })
+  pp: number; // peças de prata
+
   @Column('int')
-  money: number;
+  money: number; // peças de ouro (po)
+
+  @Column('int', { default: 0 })
+  pl: number; // peças de platina
 
   @Column('int')
   health: number;
@@ -73,4 +79,10 @@ export class Character {
 
   @Column({ type: 'int', default: 0 })
   hitDiceUsed: number;
+
+  @Column({ type: 'int', default: 0 })
+  asiPointsUsed: number;
+
+  @Column({ type: 'boolean', default: false })
+  freeAttrEdit: boolean;
 }

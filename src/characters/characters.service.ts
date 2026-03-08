@@ -94,7 +94,9 @@ export class CharactersService {
 
     const character = this.characterRepository.create({
       name,
+      pp: createCharacterDto.pp ?? 0,
       money,
+      pl: createCharacterDto.pl ?? 0,
       health: effectiveHealth,
       maxHealth: effectiveHealth,
       idAttribute: attr,

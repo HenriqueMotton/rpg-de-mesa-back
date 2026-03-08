@@ -5,9 +5,17 @@ export class CreateCharacterDto {
   @IsNotEmpty()
   name: string;
 
+  @IsOptional()
+  @IsInt()
+  pp?: number; // peças de prata (default 0)
+
   @IsNotEmpty()
   @IsInt()
-  money: number;
+  money: number; // peças de ouro
+
+  @IsOptional()
+  @IsInt()
+  pl?: number; // peças de platina (default 0)
 
   @IsNotEmpty()
   @IsInt()

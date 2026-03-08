@@ -37,10 +37,10 @@ export class CharacterSpell {
   @Column({ default: false })
   componentM: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   materialComponent: string; // descrição do componente material
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @Column({ default: false })
