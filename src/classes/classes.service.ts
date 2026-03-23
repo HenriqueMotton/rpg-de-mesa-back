@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DndClass, ClassFeature, ClassSpellEntry, ClassProficiencies } from './entities/dnd-class.entity';
+import { DndClass, ClassFeature, ClassSpellEntry, ClassProficiencies, ClassSkillOptions } from './entities/dnd-class.entity';
 
 // ─── Seed data ───────────────────────────────────────────────────────────────
 
@@ -15,6 +15,7 @@ type ClassSeed = {
   features: ClassFeature[];
   classSpells: ClassSpellEntry[];
   proficiencies: ClassProficiencies;
+  skillOptions: ClassSkillOptions;
 };
 
 function sp(
@@ -159,6 +160,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: [],
       savingThrows: ['Força', 'Constituição'],
     },
+    skillOptions: {
+      skills: ['Adestramento', 'Atletismo', 'Intimidação', 'Natureza', 'Percepção', 'Sobrevivência'],
+      count: 2,
+    },
   },
   {
     name: 'Bardo',
@@ -182,6 +187,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Simples', 'Arco longo', 'Arco curto', 'Balhadora longa', 'Rapieira', 'Espada curta', 'Espada longa'],
       tools: ['3 instrumentos musicais (à escolha)'],
       savingThrows: ['Destreza', 'Carisma'],
+    },
+    skillOptions: {
+      skills: ['Acrobacia', 'Adestramento', 'Arcanismo', 'Atletismo', 'Atuação', 'Enganação', 'Furtividade', 'História', 'Intimidação', 'Intuição', 'Investigação', 'Medicina', 'Natureza', 'Percepção', 'Persuasão', 'Prestidigitação', 'Religião', 'Sobrevivência'],
+      count: 3,
     },
   },
   {
@@ -207,6 +216,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: [],
       savingThrows: ['Sabedoria', 'Carisma'],
     },
+    skillOptions: {
+      skills: ['Arcanismo', 'Enganação', 'História', 'Intimidação', 'Investigação', 'Natureza', 'Religião'],
+      count: 2,
+    },
   },
   {
     name: 'Clérico',
@@ -230,6 +243,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Simples'],
       tools: [],
       savingThrows: ['Sabedoria', 'Carisma'],
+    },
+    skillOptions: {
+      skills: ['História', 'Intuição', 'Medicina', 'Persuasão', 'Religião'],
+      count: 2,
     },
   },
   {
@@ -255,6 +272,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: ['Suprimentos de herbalista'],
       savingThrows: ['Inteligência', 'Sabedoria'],
     },
+    skillOptions: {
+      skills: ['Adestramento', 'Arcanismo', 'Intuição', 'Medicina', 'Natureza', 'Percepção', 'Religião', 'Sobrevivência'],
+      count: 2,
+    },
   },
   {
     name: 'Feiticeiro',
@@ -278,6 +299,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Adaga', 'Dardo', 'Funda', 'Cajado', 'Balhadora leve'],
       tools: [],
       savingThrows: ['Constituição', 'Carisma'],
+    },
+    skillOptions: {
+      skills: ['Arcanismo', 'Enganação', 'Intuição', 'Intimidação', 'Persuasão', 'Religião'],
+      count: 2,
     },
   },
   {
@@ -303,6 +328,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: [],
       savingThrows: ['Força', 'Constituição'],
     },
+    skillOptions: {
+      skills: ['Acrobacia', 'Adestramento', 'Atletismo', 'História', 'Intuição', 'Intimidação', 'Percepção', 'Sobrevivência'],
+      count: 2,
+    },
   },
   {
     name: 'Ladino',
@@ -326,6 +355,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Simples', 'Balhadora longa', 'Arco longo', 'Arco curto', 'Rapieira', 'Espada curta', 'Espada longa'],
       tools: ['Ferramentas de ladrão'],
       savingThrows: ['Destreza', 'Inteligência'],
+    },
+    skillOptions: {
+      skills: ['Acrobacia', 'Atletismo', 'Atuação', 'Enganação', 'Furtividade', 'Intuição', 'Intimidação', 'Investigação', 'Percepção', 'Persuasão', 'Prestidigitação'],
+      count: 4,
     },
   },
   {
@@ -351,6 +384,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: [],
       savingThrows: ['Inteligência', 'Sabedoria'],
     },
+    skillOptions: {
+      skills: ['Arcanismo', 'História', 'Intuição', 'Investigação', 'Medicina', 'Religião'],
+      count: 2,
+    },
   },
   {
     name: 'Monge',
@@ -373,6 +410,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Simples', 'Espada curta'],
       tools: ['1 ferramenta de artesão ou instrumento musical (à escolha)'],
       savingThrows: ['Força', 'Destreza'],
+    },
+    skillOptions: {
+      skills: ['Acrobacia', 'Atletismo', 'Furtividade', 'História', 'Intuição', 'Religião'],
+      count: 2,
     },
   },
   {
@@ -398,6 +439,10 @@ const CLASS_SEED: ClassSeed[] = [
       tools: [],
       savingThrows: ['Sabedoria', 'Carisma'],
     },
+    skillOptions: {
+      skills: ['Atletismo', 'Intuição', 'Intimidação', 'Medicina', 'Persuasão', 'Religião'],
+      count: 2,
+    },
   },
   {
     name: 'Patrulheiro',
@@ -421,6 +466,10 @@ const CLASS_SEED: ClassSeed[] = [
       weapons: ['Simples', 'Marciais'],
       tools: [],
       savingThrows: ['Força', 'Destreza'],
+    },
+    skillOptions: {
+      skills: ['Adestramento', 'Atletismo', 'Furtividade', 'Intuição', 'Investigação', 'Natureza', 'Percepção', 'Sobrevivência'],
+      count: 3,
     },
   },
 ];
@@ -450,6 +499,7 @@ export class ClassesService implements OnModuleInit {
       const update: Partial<DndClass> = {};
       if (!existing.classSpells || existing.classSpells.length === 0) update.classSpells   = seed.classSpells;
       if (!existing.proficiencies)                                     update.proficiencies = seed.proficiencies;
+      if (!existing.skillOptions)                                      update.skillOptions  = seed.skillOptions;
       if (Object.keys(update).length > 0) {
         await this.classRepository.update({ name: seed.name }, update);
       }

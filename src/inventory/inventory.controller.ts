@@ -3,6 +3,7 @@ import { InventoryService } from './inventory.service';
 import { CreateInventoryItemDto } from './dto/create-inventory-item.dto';
 import { UpdateInventoryItemDto } from './dto/update-inventory-item.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { MasterGuard } from '../auth/master.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('inventory')
@@ -10,6 +11,13 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('inventory')
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
+
+  @UseGuards(JwtAuthGuard, MasterGuard)
+  @Get('master/character/:characterId')
+  @ApiOperation({ summary: 'Retorna o inventário do personagem (apenas mestre)' })
+  async findByCharacterMaster(@Param('characterId') characterId: string) {
+    return this.inventoryService.findByCharacterMaster(+characterId);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('character/:characterId')

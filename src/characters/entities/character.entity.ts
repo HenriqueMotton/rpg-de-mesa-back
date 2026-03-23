@@ -7,6 +7,7 @@ import { CharacterSkills } from './character-skills.entity';
 import { Race } from '../../race/entities/race.entity';
 import { SubRace } from '../../race/entities/sub-race.entity';
 import { DndClass } from '../../classes/entities/dnd-class.entity';
+import { Background } from '../../backgrounds/entities/background.entity';
 
 @Entity()
 export class Character {
@@ -68,6 +69,10 @@ export class Character {
   @JoinColumn({ name: 'sub_race_id' })
   subRace: SubRace;
 
+  @ManyToOne(() => Background, { nullable: true, eager: false })
+  @JoinColumn({ name: 'background_id' })
+  background: Background;
+
   @Column({ nullable: true, type: 'varchar' })
   avatarUrl: string | null;
 
@@ -85,4 +90,7 @@ export class Character {
 
   @Column({ type: 'boolean', default: false })
   freeAttrEdit: boolean;
+
+  @Column({ type: 'jsonb', nullable: true, default: [] })
+  notes: { id: string; text: string; createdAt: string }[];
 }

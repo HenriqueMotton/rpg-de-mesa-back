@@ -12,6 +12,11 @@ export type ClassProficiencies = {
   savingThrows: string[];
 };
 
+export type ClassSkillOptions = {
+  skills: string[]; // nomes das perícias disponíveis para a classe
+  count: number;    // quantas o jogador pode escolher
+};
+
 export type ClassSpellEntry = {
   name: string;
   level: number;
@@ -58,4 +63,7 @@ export class DndClass {
 
   @Column({ type: 'jsonb', nullable: true })
   proficiencies: ClassProficiencies;
+
+  @Column({ type: 'jsonb', nullable: true })
+  skillOptions: ClassSkillOptions;
 }

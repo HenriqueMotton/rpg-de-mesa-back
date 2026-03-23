@@ -32,6 +32,13 @@ export class SpellsController {
     return this.spellsService.findAllForMaster();
   }
 
+  @UseGuards(JwtAuthGuard, MasterGuard)
+  @Get('master/character/:characterId')
+  @ApiOperation({ summary: 'Retorna magias de um personagem específico (apenas mestre)' })
+  async findByCharacterMaster(@Param('characterId') characterId: string) {
+    return this.spellsService.findByCharacterMaster(+characterId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('character/:characterId/bulk')
   @ApiOperation({ summary: 'Adiciona múltiplas magias de uma vez' })

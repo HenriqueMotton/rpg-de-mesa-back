@@ -41,6 +41,12 @@ export class CharactersController {
     return this.charactersService.findAllCharacters();
   }
 
+  @UseGuards(JwtAuthGuard, MasterGuard)
+  @Get('master/:id')
+  async findOneForMaster(@Param('id') id: string) {
+    return this.charactersService.findOneForMaster(+id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Retorna um personagem específico' })

@@ -6,6 +6,16 @@ export type RaceTrait = {
   description: string;
 };
 
+export type RaceSpellGrant = {
+  name: string;
+  minCharLevel?: number; // nível mínimo do personagem para receber esta magia (default: 1)
+};
+
+export type SubRaceCantripChoice = {
+  count: number;
+  from: string; // nome da classe para filtrar o catálogo, ex: 'Mago'
+};
+
 @Entity()
 export class SubRace {
   @PrimaryGeneratedColumn()
@@ -22,6 +32,12 @@ export class SubRace {
 
   @Column({ type: 'jsonb', default: '[]' })
   traits: RaceTrait[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  spellGrants: RaceSpellGrant[]; // magias auto-concedidas pela sub-raça (com nível mínimo opcional)
+
+  @Column({ type: 'jsonb', nullable: true })
+  cantripChoice: SubRaceCantripChoice | null; // truque à escolha do jogador
 
   @ManyToOne(() => Race, (race) => race.subRaces, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'race_id' })

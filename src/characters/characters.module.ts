@@ -10,6 +10,8 @@ import { Race } from '../race/entities/race.entity';
 import { SubRace } from '../race/entities/sub-race.entity';
 import { DndClass } from '../classes/entities/dnd-class.entity';
 import { CharacterSpell } from '../spells/entities/character-spell.entity';
+import { DndSpell } from '../spells/entities/dnd-spell.entity';
+import { Background } from '../backgrounds/entities/background.entity';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { CharacterSpell } from '../spells/entities/character-spell.entity';
       SubRace,
       DndClass,
       CharacterSpell,
+      DndSpell,
+      Background,
     ]),
   ],
   providers: [CharactersService],

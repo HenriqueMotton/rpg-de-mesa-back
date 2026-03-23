@@ -20,19 +20,19 @@ export class BugReportsController {
   }
 
   /** Only master can list / update / delete */
-  @UseGuards(MasterGuard)
+  @UseGuards(JwtAuthGuard, MasterGuard)
   @Get()
   findAll() {
     return this.service.findAll();
   }
 
-  @UseGuards(MasterGuard)
+  @UseGuards(JwtAuthGuard, MasterGuard)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateBugReportDto) {
     return this.service.update(id, dto);
   }
 
-  @UseGuards(MasterGuard)
+  @UseGuards(JwtAuthGuard, MasterGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);

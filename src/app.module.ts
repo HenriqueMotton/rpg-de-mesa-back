@@ -34,6 +34,12 @@ import { BugReportsModule } from './bug-reports/bug-reports.module';
 import { BugReport } from './bug-reports/entities/bug-report.entity';
 import { ChatModule } from './chat/chat.module';
 import { ChatMessage } from './chat/entities/chat-message.entity';
+import { Background } from './backgrounds/entities/background.entity';
+import { BackgroundsModule } from './backgrounds/backgrounds.module';
+import { Trauma } from './psychology/entities/trauma.entity';
+import { PsychologyModule } from './psychology/psychology.module';
+import { CustomNpc } from './custom-npcs/entities/custom-npc.entity';
+import { CustomNpcsModule } from './custom-npcs/custom-npcs.module';
 
 @Module({
   imports: [
@@ -64,6 +70,9 @@ import { ChatMessage } from './chat/entities/chat-message.entity';
         PriceItem,
         BugReport,
         ChatMessage,
+        Background,
+        Trauma,
+        CustomNpc,
       ],
       synchronize: true, // Use apenas em desenvolvimento
     }),
@@ -82,6 +91,9 @@ import { ChatMessage } from './chat/entities/chat-message.entity';
     PriceItemsModule,
     BugReportsModule,
     ChatModule,
+    BackgroundsModule,
+    PsychologyModule,
+    CustomNpcsModule,
   ],
 })
 export class AppModule {}

@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Race } from './entities/race.entity';
-import { SubRace, RaceTrait } from './entities/sub-race.entity';
+import { Race, RaceSkillGrants } from './entities/race.entity';
+import { SubRace, RaceTrait, SubRaceCantripChoice, RaceSpellGrant } from './entities/sub-race.entity';
 
 // ─── Seed data ───────────────────────────────────────────────────────────────
 
@@ -11,6 +11,7 @@ type RaceSeed = {
   description: string;
   bonuses: Race['bonuses'];
   traits: RaceTrait[];
+  skillGrants: RaceSkillGrants;
 };
 
 const ZERO = { forca: 0, destreza: 0, constituicao: 0, inteligencia: 0, sabedoria: 0, carisma: 0 };
@@ -27,6 +28,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Proficiência em Ferramentas', description: 'Proficiência em ferramentas de ferreiro, ferramentas de cervejeiro ou ferramentas de pedreiro (à sua escolha).' },
       { name: 'Sentido de Pedra', description: 'Dobro do bônus de proficiência em testes de História relacionados à origem de trabalho em pedra.' },
     ],
+    skillGrants: { fixed: [] },
   },
   {
     name: 'Elfo',
@@ -38,6 +40,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Ancestralidade Feérica', description: 'Vantagem em testes de resistência contra ser enfeitiçado, e magia não pode fazer você adormecer.' },
       { name: 'Transe', description: 'Elfos não precisam dormir. Em vez disso, meditam profundamente por 4 horas por dia. Após esse descanso, obtém os mesmos benefícios que um humano teria após 8 horas de sono.' },
     ],
+    skillGrants: { fixed: ['Percepção'] },
   },
   {
     name: 'Meio-Elfo',
@@ -48,6 +51,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Ancestralidade Feérica', description: 'Vantagem em testes de resistência contra ser enfeitiçado, e magia não pode fazer você adormecer.' },
       { name: 'Versatilidade de Perícias', description: 'Proficiência em duas perícias à sua escolha.' },
     ],
+    skillGrants: { fixed: [], choose: { count: 2, from: [] } },
   },
   {
     name: 'Humano',
@@ -57,6 +61,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Versatilidade de Atributos', description: '+1 em todos os seis atributos. Os humanos se adaptam rapidamente a qualquer desafio.' },
       { name: 'Idiomas Extras', description: 'Fala, lê e escreve Comum e um idioma adicional à sua escolha.' },
     ],
+    skillGrants: { fixed: [] },
   },
   {
     name: 'Draconato',
@@ -67,6 +72,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Sopro', description: 'Ação: você exala energia destrutiva com base na sua ancestralidade. A CD de resistência = 8 + modificador de Constituição + bônus de proficiência.' },
       { name: 'Resistência a Dano', description: 'Resistência ao tipo de dano associado à sua ancestralidade dracônica.' },
     ],
+    skillGrants: { fixed: [] },
   },
   {
     name: 'Gnomo',
@@ -76,6 +82,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Visão no Escuro', description: 'Acostumado às tocas subterrâneas, você pode ver no escuro até 18 metros como se fosse luz fraca.' },
       { name: 'Esperteza Gnômica', description: 'Vantagem em todos os testes de resistência de Inteligência, Sabedoria e Carisma contra magia.' },
     ],
+    skillGrants: { fixed: [] },
   },
   {
     name: 'Meio-Orc',
@@ -87,6 +94,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Resistência Implacável', description: 'Uma vez por descanso longo, quando reduzido a 0 pontos de vida, você cai a 1 ponto de vida em vez disso.' },
       { name: 'Ataques Selvagens', description: 'Quando você causa um acerto crítico com uma arma corpo a corpo, pode rolar um dos dados de dano da arma mais uma vez e adicioná-lo ao dano extra do acerto crítico.' },
     ],
+    skillGrants: { fixed: ['Intimidação'] },
   },
   {
     name: 'Hobbit',
@@ -97,6 +105,7 @@ const RACE_SEED: RaceSeed[] = [
       { name: 'Bravura', description: 'Vantagem em testes de resistência contra o efeito amedrontado.' },
       { name: 'Agilidade Hobbit', description: 'Você pode se mover pelo espaço de qualquer criatura de tamanho maior do que o seu.' },
     ],
+    skillGrants: { fixed: [] },
   },
 ];
 
@@ -106,6 +115,8 @@ type SubRaceSeed = {
   bonuses: SubRace['bonuses'];
   traits: RaceTrait[];
   raceName: string;
+  spellGrants?: RaceSpellGrant[];
+  cantripChoice?: SubRaceCantripChoice;
 };
 
 const SUB_RACE_SEED: SubRaceSeed[] = [
@@ -140,6 +151,7 @@ const SUB_RACE_SEED: SubRaceSeed[] = [
       { name: 'Truque', description: 'Você conhece um truque à sua escolha da lista de magias do mago. Inteligência é seu atributo para conjuração.' },
       { name: 'Idioma Extra', description: 'Você pode falar, ler e escrever um idioma extra à sua escolha.' },
     ],
+    cantripChoice: { count: 1, from: 'Mago' },
   },
   {
     raceName: 'Elfo',
@@ -163,6 +175,11 @@ const SUB_RACE_SEED: SubRaceSeed[] = [
       { name: 'Magia Drow', description: 'Você conhece o truque Luz Dançante. Ao atingir o 3° nível, pode lançar Fogo das Fadas uma vez por dia. Ao atingir o 5°, pode lançar Escuridão uma vez por dia. Carisma é seu atributo de conjuração.' },
       { name: 'Treinamento em Armas Drow', description: 'Proficiência em rapieiras, espadas curtas e bestas de mão.' },
     ],
+    spellGrants: [
+      { name: 'Luz Dançante', minCharLevel: 1 },
+      { name: 'Fogo das Fadas', minCharLevel: 3 },
+      { name: 'Escuridão', minCharLevel: 5 },
+    ],
   },
 
   // ── Gnomo ─────────────────────────────────────────────────────────────────
@@ -175,6 +192,7 @@ const SUB_RACE_SEED: SubRaceSeed[] = [
       { name: 'Ilusão Natural', description: 'Você conhece o truque Ilusão Menor. Inteligência é seu atributo de conjuração para ele.' },
       { name: 'Falar com Pequenas Bestas', description: 'Você pode se comunicar conceitos simples com bestas de tamanho Pequeno ou menor por meio de sons e gestos.' },
     ],
+    spellGrants: [{ name: 'Ilusão Menor', minCharLevel: 1 }],
   },
   {
     raceName: 'Gnomo',
@@ -233,16 +251,34 @@ export class RaceService implements OnModuleInit {
       const races = await this.raceRepository.find();
       for (const race of races) {
         const seed = RACE_SEED.find((s) => s.name === race.name);
-        if (seed && (!race.traits || race.traits.length === 0)) {
-          await this.raceRepository.update(race.id, { traits: seed.traits });
+        if (!seed) continue;
+        const update: Partial<Race> = {};
+        if (!race.traits || race.traits.length === 0) update.traits = seed.traits;
+        if (!race.skillGrants) update.skillGrants = seed.skillGrants;
+        if (Object.keys(update).length > 0) {
+          await this.raceRepository.update(race.id, update);
         }
       }
 
-      // Seed sub-races if missing
+      // Seed sub-races if missing, otherwise update existing
       const subRaceCount = await this.subRaceRepository.count();
       if (subRaceCount === 0) {
         const allRaces = await this.raceRepository.find();
         await this.seedSubRaces(allRaces);
+      } else {
+        const subRaces = await this.subRaceRepository.find();
+        for (const sr of subRaces) {
+          const seed = SUB_RACE_SEED.find((s) => s.name === sr.name);
+          if (!seed) continue;
+          const update: Partial<SubRace> = {};
+          // Atualiza spellGrants se ausente ou ainda no formato legado (string[])
+          const hasLegacyGrants = sr.spellGrants && typeof (sr.spellGrants as any)[0] === 'string';
+          if (seed.spellGrants && (!sr.spellGrants || hasLegacyGrants)) update.spellGrants = seed.spellGrants;
+          if (seed.cantripChoice && !sr.cantripChoice) update.cantripChoice = seed.cantripChoice;
+          if (Object.keys(update).length > 0) {
+            await this.subRaceRepository.update(sr.id, update);
+          }
+        }
       }
     }
   }
@@ -257,6 +293,8 @@ export class RaceService implements OnModuleInit {
         bonuses: s.bonuses,
         traits: s.traits,
         race: byName[s.raceName],
+        ...(s.spellGrants ? { spellGrants: s.spellGrants } : {}),
+        ...(s.cantripChoice ? { cantripChoice: s.cantripChoice } : {}),
       }));
     await this.subRaceRepository.save(toSave);
   }

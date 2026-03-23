@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateInventoryItemDto {
   @IsNotEmpty()
@@ -20,4 +20,17 @@ export class CreateInventoryItemDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  armorType?: string; // 'light' | 'medium' | 'heavy' | 'shield'
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  armorAc?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isEquipped?: boolean;
 }

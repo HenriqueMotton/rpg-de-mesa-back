@@ -1,7 +1,7 @@
 // src/characters/characters.service.ts
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Character } from './entities/character.entity';
 import { Attributes } from './entities/attributes.entity';
 import { Skills } from '../skills/entities/skills.entity';
@@ -13,6 +13,8 @@ import { Race } from '../race/entities/race.entity';
 import { SubRace } from '../race/entities/sub-race.entity';
 import { DndClass } from '../classes/entities/dnd-class.entity';
 import { CharacterSpell } from '../spells/entities/character-spell.entity';
+import { DndSpell } from '../spells/entities/dnd-spell.entity';
+import { Background } from '../backgrounds/entities/background.entity';
 
 const XP_THRESHOLDS = [0, 300, 900, 1800, 3800, 7500, 14000, 23000, 34000, 48000, 64000, 83000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000];
 
@@ -50,11 +52,15 @@ export class CharactersService {
     private readonly dndClassRepository: Repository<DndClass>,
     @InjectRepository(CharacterSpell)
     private readonly characterSpellRepository: Repository<CharacterSpell>,
+    @InjectRepository(DndSpell)
+    private readonly dndSpellRepository: Repository<DndSpell>,
+    @InjectRepository(Background)
+    private readonly backgroundRepository: Repository<Background>,
   ) {}
 
   // Cria um novo personagem
   async create(createCharacterDto: CreateCharacterDto, user): Promise<Character> {
-    const { name, money, health, attributes, selectedSkills, raceId, subRaceId, classId, height } = createCharacterDto;
+    const { name, money, health, attributes, selectedSkills, classSkillIds, raceSkillIds, raceId, subRaceId, classId, backgroundId, raceCantripName, height } = createCharacterDto;
 
     // Busca a raça e aplica bônus nos atributos base
     let race: Race | null = null;
@@ -67,6 +73,11 @@ export class CharactersService {
     let dndClass: DndClass | null = null;
     if (classId) {
       dndClass = await this.dndClassRepository.findOne({ where: { id: classId } });
+    }
+
+    let background: Background | null = null;
+    if (backgroundId) {
+      background = await this.backgroundRepository.findOne({ where: { id: backgroundId } });
     }
 
     if (subRaceId) {
@@ -104,18 +115,123 @@ export class CharactersService {
       ...(dndClass ? { dndClass } : {}),
       ...(race ? { race } : {}),
       ...(subRace ? { subRace } : {}),
+      ...(background ? { background } : {}),
       ...(height != null ? { height } : {}),
     });
 
     await this.characterRepository.insert(character);
 
+    // Perícias de classe
     if (selectedSkills.length > 0) {
+      const classSkillSet = new Set(classSkillIds ?? []);
       const characterSkills = selectedSkills.map(skillId => ({
         character,
         skill: { id: skillId },
+        source: classSkillSet.has(skillId) ? 'class' : 'choice',
       }));
-    
       await this.characterSkillsRepository.insert(characterSkills);
+    }
+
+    // Perícias de raça — fixas (concedidas automaticamente)
+    const fixedRaceSkillNames: string[] = race?.skillGrants?.fixed ?? [];
+    if (fixedRaceSkillNames.length > 0) {
+      const allSkills = await this.skillsRepository.find();
+      const alreadyGranted = new Set([...selectedSkills, ...(raceSkillIds ?? [])]);
+      const fixedSkills = allSkills.filter(sk =>
+        fixedRaceSkillNames.some(n => n.toLowerCase().trim() === sk.name.toLowerCase().trim())
+        && !alreadyGranted.has(sk.id)
+      );
+      if (fixedSkills.length > 0) {
+        await this.characterSkillsRepository.insert(
+          fixedSkills.map(sk => ({ character, skill: { id: sk.id }, source: 'race' }))
+        );
+      }
+    }
+
+    // Perícias de raça — escolhidas pelo jogador (ex: Meio-Elfo)
+    if (raceSkillIds && raceSkillIds.length > 0) {
+      const alreadyGranted = new Set(selectedSkills);
+      const newRaceSkills = raceSkillIds.filter(id => !alreadyGranted.has(id));
+      if (newRaceSkills.length > 0) {
+        await this.characterSkillsRepository.insert(
+          newRaceSkills.map(skillId => ({ character, skill: { id: skillId }, source: 'race' }))
+        );
+      }
+    }
+
+    // Magias raciais da sub-raça
+    if (subRace) {
+      // Magias fixas (ex: Drow: Luz Dançante ao nível 1, Fogo das Fadas ao nível 3, Escuridão ao nível 5)
+      // Personagens novos sempre começam no nível 1 — só concede as magias elegíveis imediatamente
+      const nivel = 1;
+      const allGrants = subRace.spellGrants ?? [];
+      const grantedNames: string[] = allGrants
+        .filter((g) => (g.minCharLevel ?? 1) <= nivel)
+        .map((g) => g.name);
+      if (grantedNames.length > 0) {
+        const dndSpells = await this.dndSpellRepository.find({ where: { name: In(grantedNames) } });
+        if (dndSpells.length > 0) {
+          await this.characterSpellRepository.insert(
+            dndSpells.map(sp => ({
+              character,
+              name: sp.name,
+              level: sp.level,
+              school: sp.school,
+              castingTime: sp.castingTime,
+              range: sp.range,
+              duration: sp.duration,
+              componentV: sp.componentV,
+              componentS: sp.componentS,
+              componentM: sp.componentM,
+              materialComponent: sp.materialComponent,
+              description: sp.description,
+              isRacial: true,
+              prepared: true,
+            }))
+          );
+        }
+      }
+
+      // Truque à escolha (ex: Alto Elfo escolhe 1 truque do Mago)
+      if (subRace.cantripChoice && raceCantripName) {
+        const cantripSpell = await this.dndSpellRepository.findOne({ where: { name: raceCantripName } });
+        if (cantripSpell) {
+          await this.characterSpellRepository.insert({
+            character,
+            name: cantripSpell.name,
+            level: cantripSpell.level,
+            school: cantripSpell.school,
+            castingTime: cantripSpell.castingTime,
+            range: cantripSpell.range,
+            duration: cantripSpell.duration,
+            componentV: cantripSpell.componentV,
+            componentS: cantripSpell.componentS,
+            componentM: cantripSpell.componentM,
+            materialComponent: cantripSpell.materialComponent,
+            description: cantripSpell.description,
+            isRacial: true,
+            prepared: true,
+          });
+        }
+      }
+    }
+
+    // Perícias do background — fixas (concedidas automaticamente)
+    if (background && background.skillGrants && background.skillGrants.length > 0) {
+      const allSkills = await this.skillsRepository.find();
+      const alreadyGranted = new Set([
+        ...selectedSkills,
+        ...(raceSkillIds ?? []),
+      ]);
+      const bgSkills = allSkills.filter(sk =>
+        background.skillGrants.some(n => n.toLowerCase().trim() === sk.name.toLowerCase().trim())
+        && !alreadyGranted.has(sk.id)
+      );
+      if (bgSkills.length > 0) {
+        await this.characterSkillsRepository.insert(
+          bgSkills.map(sk => ({ character, skill: { id: sk.id }, source: 'background' }))
+        );
+      }
     }
 
     return character;
@@ -165,9 +281,27 @@ export class CharactersService {
 
   async findAllCharacters(): Promise<Character[]> {
     return this.characterRepository.find({
-      relations: ['idUser', 'dndClass'],
+      relations: ['idUser', 'dndClass', 'race', 'subRace'],
       order: { name: 'ASC' },
     });
+  }
+
+  async findOneForMaster(id: number): Promise<any> {
+    const character = await this.characterRepository.findOne({
+      where: { id },
+      relations: [
+        'idAttribute',
+        'characterSkills',
+        'characterSkills.skill',
+        'race',
+        'subRace',
+        'dndClass',
+        'background',
+        'idUser',
+      ],
+    });
+    if (!character) throw new NotFoundException('Personagem não encontrado');
+    return character;
   }
 
   async findOne(id: number, userId: number): Promise<any> {
@@ -185,6 +319,7 @@ export class CharactersService {
           'race',
           'subRace',
           'dndClass',
+          'background',
         ]
       }
     );
@@ -196,7 +331,8 @@ export class CharactersService {
       ...character,
       characterSkills: character.characterSkills.map(characterSkill => ({
         name: characterSkill.skill.name,
-        attribute: characterSkill.skill.attribute
+        attribute: characterSkill.skill.attribute,
+        source: characterSkill.source ?? 'choice',
       })),
     };
     

@@ -1,5 +1,5 @@
 // src/characters/entities/character-skills.entity.ts
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { Character } from './character.entity';
 import { Skills } from '../../skills/entities/skills.entity';
 
@@ -15,4 +15,7 @@ export class CharacterSkills {
   @ManyToOne(() => Skills, (skill) => skill.characterSkills)
   @JoinColumn({ name: 'skill_id' })
   skill: Skills;
+
+  @Column({ default: 'choice' })
+  source: string; // 'class' | 'choice' | 'background'
 }

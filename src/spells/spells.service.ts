@@ -53,6 +53,14 @@ export class SpellsService implements OnModuleInit {
     return spells;
   }
 
+  async findByCharacterMaster(characterId: number) {
+    const spells = await this.spellsRepository.find({
+      where: { character: { id: characterId } },
+      order: { level: 'ASC', name: 'ASC' },
+    });
+    return spells;
+  }
+
   async create(characterId: number, userId: number, dto: CreateCharacterSpellDto): Promise<CharacterSpell> {
     const character = await this.characterRepository.findOne({
       where: { id: characterId, idUser: { id: userId } },

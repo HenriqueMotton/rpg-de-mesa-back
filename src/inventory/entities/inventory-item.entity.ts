@@ -24,4 +24,17 @@ export class InventoryItem {
 
   @Column({ nullable: true })
   description: string;
+
+  // ── CA / Armadura ────────────────────────────────────────────────────────
+  // 'light' | 'medium' | 'heavy' | 'shield' | null
+  @Column({ nullable: true })
+  armorType: string;
+
+  // CA base da armadura (ex: 11 para Couro, 16 para Cota de Malha, 2 para Escudo)
+  @Column('int', { nullable: true })
+  armorAc: number;
+
+  // Se o item está equipado (usado no cálculo de CA)
+  @Column({ default: false })
+  isEquipped: boolean;
 }

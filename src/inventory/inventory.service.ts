@@ -37,6 +37,27 @@ export class InventoryService {
     return { items, totalWeight, carryingCapacity };
   }
 
+  async findByCharacterMaster(characterId: number) {
+    const character = await this.characterRepository.findOne({
+      where: { id: characterId },
+      relations: ['idAttribute'],
+    });
+    if (!character) throw new NotFoundException('Personagem não encontrado');
+
+    const items = await this.inventoryRepository.find({
+      where: { character: { id: characterId } },
+      order: { name: 'ASC' },
+    });
+
+    const totalWeight = Math.round(
+      items.reduce((sum, item) => sum + item.weight * item.quantity, 0) * 100,
+    ) / 100;
+
+    const carryingCapacity = Math.round(Number(character.idAttribute?.forca ?? 10) * 6.8 * 10) / 10;
+
+    return { items, totalWeight, carryingCapacity };
+  }
+
   async create(characterId: number, userId: number, dto: CreateInventoryItemDto): Promise<InventoryItem> {
     const character = await this.characterRepository.findOne({
       where: { id: characterId, idUser: { id: userId } },

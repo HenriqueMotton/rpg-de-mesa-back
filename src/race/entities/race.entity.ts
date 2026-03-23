@@ -10,6 +10,14 @@ export type RaceBonuses = {
   carisma: number;
 };
 
+export type RaceSkillGrants = {
+  fixed: string[];      // perícias automaticamente concedidas
+  choose?: {
+    count: number;
+    from: string[];     // [] = qualquer perícia
+  };
+};
+
 @Entity()
 export class Race {
   @PrimaryGeneratedColumn()
@@ -26,6 +34,9 @@ export class Race {
 
   @Column({ type: 'jsonb', default: '[]' })
   traits: RaceTrait[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  skillGrants: RaceSkillGrants;
 
   @OneToMany(() => SubRace, (subRace) => subRace.race, { cascade: true })
   subRaces: SubRace[];

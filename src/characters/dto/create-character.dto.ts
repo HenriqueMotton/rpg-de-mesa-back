@@ -36,6 +36,18 @@ export class CreateCharacterDto {
   selectedSkills: number[]; // IDs das perícias selecionadas
 
   @IsOptional()
+  @IsArray()
+  classSkillIds?: number[]; // IDs das perícias originadas da classe
+
+  @IsOptional()
+  @IsArray()
+  raceSkillIds?: number[]; // IDs das perícias escolhidas pela raça (Meio-Elfo etc.)
+
+  @IsOptional()
+  @IsInt()
+  backgroundId?: number;
+
+  @IsOptional()
   @IsInt()
   classId?: number;
 
@@ -48,6 +60,8 @@ export class CreateCharacterDto {
   subRaceId?: number;
 
   @IsOptional()
-  @IsInt()
   height?: number;
+
+  @IsOptional()
+  raceCantripName?: string;
 }

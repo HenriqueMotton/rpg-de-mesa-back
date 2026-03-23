@@ -61,4 +61,8 @@ export class UpdateCharacterDto {
 
   @IsOptional()
   freeAttrEdit?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  notes?: { id: string; text: string; createdAt: string }[];
 }
