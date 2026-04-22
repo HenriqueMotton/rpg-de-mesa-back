@@ -40,4 +40,13 @@ export class DndSpell {
 
   @Column({ type: 'jsonb', default: [] })
   classes: string[];
+
+  @Column({ default: false })
+  ritual: boolean;
+
+  @Column({ default: false })
+  concentration: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  higherLevel: string;
 }

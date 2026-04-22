@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateInventoryItemDto {
   @IsNotEmpty()
@@ -33,4 +33,8 @@ export class CreateInventoryItemDto {
   @IsOptional()
   @IsBoolean()
   isEquipped?: boolean;
+
+  @IsOptional()
+  @IsObject()
+  properties?: Record<string, unknown>;
 }

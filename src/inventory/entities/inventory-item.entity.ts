@@ -37,4 +37,8 @@ export class InventoryItem {
   // Se o item está equipado (usado no cálculo de CA)
   @Column({ default: false })
   isEquipped: boolean;
+
+  // Propriedades genéricas do item (ex: dano, tipo de dano, alcance, propriedades de arma)
+  @Column('json', { nullable: true })
+  properties: Record<string, unknown> | null;
 }
