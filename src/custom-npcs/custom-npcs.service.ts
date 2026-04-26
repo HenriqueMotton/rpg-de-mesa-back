@@ -17,8 +17,21 @@ export class CustomNpcsService {
     return this.repo.save(npc);
   }
 
-  findAll(): Promise<CustomNpc[]> {
-    return this.repo.find({ order: { createdAt: 'DESC' } });
+  async findAll(
+    page?: number,
+    limit?: number,
+    search?: string,
+    status?: string,
+  ): Promise<{ data: CustomNpc[]; total: number }> {
+    const qb = this.repo.createQueryBuilder('npc');
+    if (status) qb.andWhere('npc.status = :status', { status });
+    if (search?.trim()) qb.andWhere('LOWER(npc.name) LIKE LOWER(:search)', { search: `%${search.trim()}%` });
+    qb.orderBy('npc.createdAt', 'DESC');
+    if (page && limit) {
+      qb.skip((page - 1) * limit).take(limit);
+    }
+    const [data, total] = await qb.getManyAndCount();
+    return { data, total };
   }
 
   async update(id: number, dto: UpdateCustomNpcDto): Promise<CustomNpc> {
