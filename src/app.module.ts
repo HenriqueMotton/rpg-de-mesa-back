@@ -40,6 +40,8 @@ import { Trauma } from './psychology/entities/trauma.entity';
 import { PsychologyModule } from './psychology/psychology.module';
 import { CustomNpc } from './custom-npcs/entities/custom-npc.entity';
 import { CustomNpcsModule } from './custom-npcs/custom-npcs.module';
+import { GlobalSettings } from './settings/entities/global-settings.entity';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -73,6 +75,7 @@ import { CustomNpcsModule } from './custom-npcs/custom-npcs.module';
         Background,
         Trauma,
         CustomNpc,
+        GlobalSettings,
       ],
       synchronize: true, // Use apenas em desenvolvimento
     }),
@@ -94,6 +97,7 @@ import { CustomNpcsModule } from './custom-npcs/custom-npcs.module';
     BackgroundsModule,
     PsychologyModule,
     CustomNpcsModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export type ClassFeature = {
   name: string;
   description: string;
+  unlockLevel: number;
 };
 
 export type ClassProficiencies = {

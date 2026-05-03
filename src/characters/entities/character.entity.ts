@@ -93,4 +93,36 @@ export class Character {
 
   @Column({ type: 'jsonb', nullable: true, default: [] })
   notes: { id: string; text: string; createdAt: string }[];
+
+  @Column({ type: 'jsonb', nullable: true, default: null })
+  sanidade: {
+    hpPsiquicoTotal: number;
+    danoAcumulado: number;
+    estagioAtual: 1 | 2 | 3 | 4 | 5;
+    modificadores: string[];
+    historicoEventos: {
+      id: string;
+      sessao: number;
+      vetorId: string;
+      danoRolado: number;
+      descricaoNarrativa: string;
+      timestamp: string;
+    }[];
+  } | null;
+
+  @Column({ type: 'jsonb', nullable: true, default: null })
+  exposicaoAmbar: {
+    pontosAcumulados: number;
+    limiarAtivacao: number;
+    barraAtiva: boolean;
+    primeiraExposicao?: string;
+    historicoExposicao: {
+      id: string;
+      sessao: number;
+      tipoEvento: string;
+      pontosGanhos: number;
+      descricaoNarrativa: string;
+      timestamp: string;
+    }[];
+  } | null;
 }

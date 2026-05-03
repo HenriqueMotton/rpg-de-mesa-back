@@ -65,4 +65,22 @@ export class UpdateCharacterDto {
   @IsOptional()
   @IsArray()
   notes?: { id: string; text: string; createdAt: string }[];
+
+  @IsOptional()
+  sanidade?: {
+    hpPsiquicoTotal: number;
+    danoAcumulado: number;
+    estagioAtual: 1 | 2 | 3 | 4 | 5;
+    modificadores: string[];
+    historicoEventos: any[];
+  } | null;
+
+  @IsOptional()
+  exposicaoAmbar?: {
+    pontosAcumulados: number;
+    limiarAtivacao: number;
+    barraAtiva: boolean;
+    primeiraExposicao?: string;
+    historicoExposicao: any[];
+  } | null;
 }
